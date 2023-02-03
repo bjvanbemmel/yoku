@@ -1,2 +1,6 @@
 .tmp/
 .env
+<<<<<<< Updated upstream
+=======
+build-errors.log
+>>>>>>> Stashed changes
