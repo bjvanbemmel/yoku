@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${DOCKER_HOST_PORT}:${APP_PORT}
+    volumes:
+      - ./:/yoku/api
+    env_file: 
+      - ./.env
+    dns_search:
+      - yoku.api
+
+networks:
+  yoku:
