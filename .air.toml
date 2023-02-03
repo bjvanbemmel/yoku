@@ -29,11 +29,7 @@ tmp_dir = ".tmp"
   watcher = "cyan"
 
 [log]
-<<<<<<< Updated upstream
-  main_only = false
-=======
   main_only = true
->>>>>>> Stashed changes
   time = false
 
 [misc]
