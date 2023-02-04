@@ -2,6 +2,7 @@ package router
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -18,10 +19,11 @@ const (
 )
 
 // Wrapper for the context.Context type.
-// Also contains a *http.Request.
+// Also contains a *http.Request and methods to write responses.
 type Context struct {
-	Context    context.Context
-	Request    *http.Request
+	Context        context.Context
+	Request        *http.Request
+	ResponseWriter http.ResponseWriter
 }
 
 // A struct containing the information necessary
@@ -40,7 +42,7 @@ type Route struct {
 
 // A struct that holds a bunch of Routes together.
 type RouteGroup struct {
-    Routes []*Route
+	Routes []*Route
 }
 
 // Slice containing pointers to every route.
@@ -58,6 +60,24 @@ func (c *Context) WithValue(ctx context.Context, key any, value any) *Context {
 	c.Context = context.WithValue(ctx, key, value)
 
 	return c
+}
+
+func (c *Context) WriteString(content string, status int) {
+	c.ResponseWriter.WriteHeader(status)
+	c.ResponseWriter.Write([]byte(content))
+}
+
+func (c *Context) Write(content []byte, status int) {
+	c.ResponseWriter.WriteHeader(status)
+	c.ResponseWriter.Write(content)
+}
+
+func (c *Context) WriteMap(content map[string]any, status int) {
+	body, _ := json.Marshal(content)
+
+    c.ResponseWriter.Header().Add("Content-Type", "application/json")
+	c.ResponseWriter.WriteHeader(status)
+	c.ResponseWriter.Write(body)
 }
 
 // Creates a new Route{} with the GET method.
@@ -137,27 +157,27 @@ func Delete(path string, callback func(c *Context)) *Route {
 }
 
 // Add a separate callback function that will be called before the route's callback function.
-func (r *Route) Middleware(m func (c *Context) error) *Route {
-    r.Middlewares = append(r.Middlewares, m)
+func (r *Route) Middleware(m func(c *Context) error) *Route {
+	r.Middlewares = append(r.Middlewares, m)
 
-    return r
+	return r
 }
 
 // Initialize multiple groups at once.
 // Useful when adding a single Middleware to multiple routes simultaneously.
 func Group(routes ...*Route) *RouteGroup {
-    return &RouteGroup{
-        Routes: routes,
-    }
+	return &RouteGroup{
+		Routes: routes,
+	}
 }
 
 // Add a Middleware to a group of routes.
-func (g *RouteGroup) Middleware(m func (c *Context) error) *RouteGroup {
-    for _, r := range g.Routes {
-        r.Middlewares = append(r.Middlewares, m)
-    }
+func (g *RouteGroup) Middleware(m func(c *Context) error) *RouteGroup {
+	for _, r := range g.Routes {
+		r.Middlewares = append(r.Middlewares, m)
+	}
 
-    return g
+	return g
 }
 
 // Creates a map containing every dynamic
@@ -202,6 +222,7 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	ctx := &Context{
 		Context: r.Context(),
 		Request: r,
+        ResponseWriter: w,
 	}
 
 	trimUrl := strings.Trim(r.URL.String(), "/")

@@ -21,9 +21,11 @@ func main() {
 }
 
 func testCallback(c *router.Context) {
-    test := c.Context.Value("test").(string)
+    test := c.Value("test").(string)
 
-	fmt.Println("Test callback!", test)
+    c.WriteMap(map[string]any{
+        "status": test,
+    }, 200)
 }
 
 func testMiddleware(c *router.Context) error {
