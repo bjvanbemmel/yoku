@@ -75,7 +75,7 @@ func (c *Context) Write(content []byte, status int) {
 func (c *Context) WriteMap(content map[string]any, status int) {
 	body, _ := json.Marshal(content)
 
-    c.ResponseWriter.Header().Add("Content-Type", "application/json")
+	c.ResponseWriter.Header().Add("Content-Type", "application/json")
 	c.ResponseWriter.WriteHeader(status)
 	c.ResponseWriter.Write(body)
 }
@@ -220,9 +220,9 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := &Context{
-		Context: r.Context(),
-		Request: r,
-        ResponseWriter: w,
+		Context:        r.Context(),
+		Request:        r,
+		ResponseWriter: w,
 	}
 
 	trimUrl := strings.Trim(r.URL.String(), "/")

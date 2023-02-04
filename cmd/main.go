@@ -11,27 +11,27 @@ import (
 func main() {
 	fmt.Println("こんにちは, 世界!")
 
-    router.Get("/test/{test}", testCallback).Middleware(testMiddleware)
+	router.Get("/test/{test}", testCallback).Middleware(testMiddleware)
 
-    for _, route := range router.Routes {
-        fmt.Println(*route)
-    }
+	for _, route := range router.Routes {
+		fmt.Println(*route)
+	}
 
-    router.Listen(os.Getenv("APP_PORT"))
+	router.Listen(os.Getenv("APP_PORT"))
 }
 
 func testCallback(c *router.Context) {
-    test := c.Value("test").(string)
+	test := c.Value("test").(string)
 
-    c.WriteMap(map[string]any{
-        "status": test,
-    }, 200)
+	c.WriteMap(map[string]any{
+		"status": test,
+	}, 200)
 }
 
 func testMiddleware(c *router.Context) error {
-    test := c.Context.Value("test").(string)
+	test := c.Context.Value("test").(string)
 
 	fmt.Println("Test middleware!", test)
 
-    return nil
+	return nil
 }
