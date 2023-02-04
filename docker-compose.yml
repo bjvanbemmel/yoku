@@ -11,8 +11,23 @@ services:
       - ./:/yoku/api
     env_file: 
       - ./.env
-    dns_search:
-      - yoku.api
+    depends_on:
+      - postgres
+    networks:
+      - yoku
+    restart: always
+
+  postgres:
+    image: postgres:15.1
+    ports:
+      - ${DOCKER_DB_PORT}:${POSTGRES_PORT}
+    env_file: 
+      - ./.env
+    volumes:
+      - /yoku/postgres:/var/lib/postgresql/data
+    networks:
+      - yoku
+    restart: always
 
 networks:
   yoku:
