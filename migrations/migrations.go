@@ -1,6 +1,10 @@
 package migrations
 
-import _ "yoku.dev/repo/database"
+import (
+	. "yoku.dev/repo/database"
+	"yoku.dev/repo/models"
+)
 
 func init() {
+    Db.AutoMigrate(&models.User{})
 }
