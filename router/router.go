@@ -56,8 +56,8 @@ func (c *Context) Value(key string) interface{} {
 }
 
 // Wrapper for the context.WithValue method.
-func (c *Context) WithValue(ctx context.Context, key any, value any) *Context {
-	c.Context = context.WithValue(ctx, key, value)
+func (c *Context) WithValue(key any, value any) *Context {
+	c.Context = context.WithValue(c.Context, key, value)
 
 	return c
 }
@@ -237,7 +237,10 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, m := range route.Middlewares {
-		m(ctx)
+        err := m(ctx)
+        if err != nil {
+            return
+        }
 	}
 
 	route.Callback(ctx)
