@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 
@@ -12,9 +11,7 @@ import (
 func main() {
 	fmt.Println("こんにちは, 世界!")
 
-	router.Get("/test", testCallback)
-	router.Get("/api/{test}", testCallback)
-	router.Get("/api/{hi}/test/{test}", testCallback)
+    router.Get("/test/{test}", testCallback).Middleware(testMiddleware)
 
     for _, route := range router.Routes {
         fmt.Println(*route)
@@ -23,8 +20,16 @@ func main() {
     router.Listen(os.Getenv("APP_PORT"))
 }
 
-func testCallback(c context.Context) {
-    test := c.Value("test").(string)
+func testCallback(c *router.Context) {
+    test := c.Context.Value("test").(string)
 
 	fmt.Println("Test callback!", test)
+}
+
+func testMiddleware(c *router.Context) error {
+    test := c.Context.Value("test").(string)
+
+	fmt.Println("Test middleware!", test)
+
+    return nil
 }
