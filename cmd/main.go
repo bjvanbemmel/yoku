@@ -5,6 +5,7 @@ import (
 	"os"
 
 	_ "github.com/joho/godotenv/autoload"
+	_ "yoku.dev/repo/migrations"
 	"yoku.dev/repo/router"
 )
 
