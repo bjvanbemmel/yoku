@@ -6,5 +6,5 @@ type User struct {
 	gorm.Model
 	Name     string
 	Password string
-	Email    string
+    Email    string `gorm:"index:idx_email,unique"`
 }
