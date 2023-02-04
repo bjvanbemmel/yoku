@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - ${DOCKER_HOST_PORT}:${APP_PORT}
+      - ${DOCKER_HOST_PORT:-81}:${APP_PORT:-80}
     volumes:
       - ./:/yoku/api
     env_file: 
@@ -20,7 +20,7 @@ services:
   postgres:
     image: postgres:15.1
     ports:
-      - ${DOCKER_DB_PORT}:${POSTGRES_PORT}
+      - ${DOCKER_DB_PORT:-5433}:${POSTGRES_PORT:-5432}
     env_file: 
       - ./.env
     volumes:
