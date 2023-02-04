@@ -62,16 +62,19 @@ func (c *Context) WithValue(ctx context.Context, key any, value any) *Context {
 	return c
 }
 
+// Write a string to the ResponseWriter.
 func (c *Context) WriteString(content string, status int) {
 	c.ResponseWriter.WriteHeader(status)
 	c.ResponseWriter.Write([]byte(content))
 }
 
+// Write a slice of bytes to the ResponseWriter.
 func (c *Context) Write(content []byte, status int) {
 	c.ResponseWriter.WriteHeader(status)
 	c.ResponseWriter.Write(content)
 }
 
+// Write serialized JSON to the ResponseWriter.
 func (c *Context) WriteMap(content map[string]any, status int) {
 	body, _ := json.Marshal(content)
 
