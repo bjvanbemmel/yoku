@@ -34,22 +34,22 @@ func registerVisit(c *router.Context) {
 
 	var vb VisitBody
 	json.NewDecoder(c.Request.Body).Decode(&vb)
-    var ip string
 
-    ip = c.Request.Header.Get("X-Forwarded-For")
+	var ip string
+	ip = c.Request.Header.Get("X-Real-IP")
 
-    if ip == "" {
-        var err error
-        ip, _, err = net.SplitHostPort(c.Request.RemoteAddr)
+	if ip == "" {
+		var err error
+		ip, _, err = net.SplitHostPort(c.Request.RemoteAddr)
 
-        if err != nil {
-            c.WriteMap(map[string]any{
-                "error": "Could not parse IP address.",
-            }, 500)
+		if err != nil {
+			c.WriteMap(map[string]any{
+				"error": "Could not parse IP address.",
+			}, 500)
 
-            return
-        }
-    }
+			return
+		}
+	}
 
 	if vb.URL == "" {
 		c.WriteMap(map[string]any{
