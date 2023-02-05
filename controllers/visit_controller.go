@@ -43,32 +43,33 @@ func (v VisitController) Create(c *router.Context) {
 
 	agent := c.Request.UserAgent()
 
-    var vpi interface{}
-    vpi, err = Cache.Select(vb.URL)
+	var vpi interface{}
+	vpi, err = Cache.Select(vb.URL)
 
-    if err != nil {
-        vp := models.VisitPath{
-            Path: vb.URL,
-        }
-        Db.Create(&vp)
+	if err != nil {
+		vp := models.VisitPath{
+			Path: vb.URL,
+		}
 
-        vpi, _ = Cache.Insert(vb.URL, vp)
-    }
+		Db.FirstOrCreate(&vp, models.VisitPath{Path: vb.URL})
 
-    vp, ok := vpi.(models.VisitPath)
+		vpi, _ = Cache.Insert(vb.URL, vp)
+	}
 
-    if !ok {
-        c.WriteMap(map[string]any{
-            "error": "cache_malfunction",
-            "message": "Something went wrong while retrieving from cache.",
-        }, 500)
-    }
+	vp, ok := vpi.(models.VisitPath)
 
-    Db.Create(&models.Visit{
-        UserAgent: agent,
-        VisitPath: vp,
-        IP:        ip,
-    })
+	if !ok {
+		c.WriteMap(map[string]any{
+			"error":   "cache_malfunction",
+			"message": "Something went wrong while retrieving from cache.",
+		}, 500)
+	}
+
+	Db.Create(&models.Visit{
+		UserAgent: agent,
+		VisitPath: vp,
+		IP:        ip,
+	})
 }
 
 func getIp(c *http.Request) (string, error) {
@@ -84,6 +85,5 @@ func getIp(c *http.Request) (string, error) {
 
 func addVisitPathToCache(vp models.VisitPath) (*models.VisitPath, error) {
 
-
-    return nil, nil
+	return nil, nil
 }

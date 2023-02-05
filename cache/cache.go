@@ -7,9 +7,9 @@ type Cache struct {
 }
 
 func New() *Cache {
-    return &Cache{
-        Inventory: make(map[any]any),
-    }
+	return &Cache{
+		Inventory: make(map[any]any),
+	}
 }
 
 func (c *Cache) Insert(key any, value any) (any, error) {
