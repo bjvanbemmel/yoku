@@ -237,10 +237,10 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, m := range route.Middlewares {
-        err := m(ctx)
-        if err != nil {
-            return
-        }
+		err := m(ctx)
+		if err != nil {
+			return
+		}
 	}
 
 	route.Callback(ctx)

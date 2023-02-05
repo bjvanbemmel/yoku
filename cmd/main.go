@@ -16,7 +16,7 @@ import (
 func main() {
 	fmt.Println("こんにちは, 世界!")
 
-    router.Post("/visit", registerVisit)
+	router.Post("/visit", registerVisit)
 
 	for _, route := range router.Routes {
 		fmt.Println(*route)
@@ -26,36 +26,36 @@ func main() {
 }
 
 type VisitBody struct {
-    URL string
+	URL string
 }
 
 func registerVisit(c *router.Context) {
-    agent := c.Request.UserAgent()
+	agent := c.Request.UserAgent()
 
-    var vb VisitBody
-    json.NewDecoder(c.Request.Body).Decode(&vb)
-    ip, _, err := net.SplitHostPort(c.Request.RemoteAddr)
+	var vb VisitBody
+	json.NewDecoder(c.Request.Body).Decode(&vb)
+	ip, _, err := net.SplitHostPort(c.Request.RemoteAddr)
 
-    if err != nil {
-        c.WriteMap(map[string]any{
-            "error": "Could not parse IP address.",
-        }, 500)
+	if err != nil {
+		c.WriteMap(map[string]any{
+			"error": "Could not parse IP address.",
+		}, 500)
 
-        return
-    }
+		return
+	}
 
-    if vb.URL == "" {
-        c.WriteMap(map[string]any{
-            "error": "missing_field",
-            "message": "The `url` field must be filled.",
-        }, 422)
+	if vb.URL == "" {
+		c.WriteMap(map[string]any{
+			"error":   "missing_field",
+			"message": "The `url` field must be filled.",
+		}, 422)
 
-        return
-    }
+		return
+	}
 
-    Db.Create(&models.Visit{
-        UserAgent: agent,
-        URI: vb.URL,
-        IP: ip,
-    })
+	Db.Create(&models.Visit{
+		UserAgent: agent,
+		URI:       vb.URL,
+		IP:        ip,
+	})
 }
