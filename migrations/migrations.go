@@ -8,4 +8,5 @@ import (
 func init() {
     Db.AutoMigrate(&models.User{})
     Db.AutoMigrate(&models.AuthToken{})
+    Db.AutoMigrate(&models.Visit{})
 }
