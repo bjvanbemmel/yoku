@@ -36,7 +36,7 @@ func registerVisit(c *router.Context) {
 	json.NewDecoder(c.Request.Body).Decode(&vb)
 
 	var ip string
-	ip = c.Request.Header.Get("X-Real-IP")
+	ip = c.Request.Header.Get("X-Forwarded-For")
 
 	if ip == "" {
 		var err error
