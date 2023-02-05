@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -68,6 +69,12 @@ func (c *Context) WriteString(content string, status int) {
 	c.ResponseWriter.Write([]byte(content))
 }
 
+// Write a string to the ResponseWriter.
+func (c *Context) WriteBool(content bool, status int) {
+	c.ResponseWriter.WriteHeader(status)
+	c.ResponseWriter.Write([]byte(strconv.FormatBool(content)))
+}
+
 // Write a slice of bytes to the ResponseWriter.
 func (c *Context) Write(content []byte, status int) {
 	c.ResponseWriter.WriteHeader(status)
@@ -78,7 +85,6 @@ func (c *Context) Write(content []byte, status int) {
 func (c *Context) WriteMap(content map[string]any, status int) {
 	body, _ := json.Marshal(content)
 
-	c.ResponseWriter.Header().Add("Content-Type", "application/json")
 	c.ResponseWriter.WriteHeader(status)
 	c.ResponseWriter.Write(body)
 }
@@ -217,6 +223,8 @@ func pathToRegex(path string) string {
 // Performs a list of actions step by step.
 // Find matching route >> run middlewares >> run callback
 func serve(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
 	route, err := findRouteByRequest(r)
 	if err != nil {
 		panic(err)
