@@ -7,6 +7,7 @@ import (
 type Visit struct {
 	gorm.Model
 	IP        string `gorm:"type:varchar(45)"`
-	URI       string `gorm:"type:varchar"`
+	VisitPathID     int
+	VisitPath       VisitPath
 	UserAgent string `gorm:"type:varchar"`
 }

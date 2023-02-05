@@ -60,9 +60,15 @@ func registerVisit(c *router.Context) {
 		return
 	}
 
+	vp := models.VisitPath{
+		Path: vb.URL,
+	}
+
+	Db.FirstOrCreate(&vp)
+
 	Db.Create(&models.Visit{
 		UserAgent: agent,
-		URI:       vb.URL,
+		VisitPath: vp,
 		IP:        ip,
 	})
 }
