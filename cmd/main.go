@@ -2,12 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"net"
 	"os"
-
-	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 
 	_ "github.com/joho/godotenv/autoload"
 	. "yoku.dev/repo/database"
@@ -19,8 +16,7 @@ import (
 func main() {
 	fmt.Println("こんにちは, 世界!")
 
-    router.Post("/auth", registerUser).Middleware(validateRegisterInput)
-	router.Get("/test/{test}", testCallback).Middleware(testMiddleware)
+    router.Post("/visit", registerVisit)
 
 	for _, route := range router.Routes {
 		fmt.Println(*route)
@@ -29,101 +25,37 @@ func main() {
 	router.Listen(os.Getenv("APP_PORT"))
 }
 
-func registerUser(c *router.Context) {
-    pw, err := bcrypt.GenerateFromPassword(c.Value("password").([]byte), 14)
+type VisitBody struct {
+    URL string
+}
+
+func registerVisit(c *router.Context) {
+    agent := c.Request.UserAgent()
+
+    var vb VisitBody
+    json.NewDecoder(c.Request.Body).Decode(&vb)
+    ip, _, err := net.SplitHostPort(c.Request.RemoteAddr)
+
     if err != nil {
         c.WriteMap(map[string]any{
-            "error": "Could not hash password.",
+            "error": "Could not parse IP address.",
         }, 500)
+
+        return
     }
 
-    user := models.User{
-        Name: c.Value("name").(string),
-        Email: c.Value("email").(string),
-        Password: string(pw),
+    if vb.URL == "" {
+        c.WriteMap(map[string]any{
+            "error": "missing_field",
+            "message": "The `url` field must be filled.",
+        }, 422)
+
+        return
     }
 
-    Db.Create(&user)
-
-    Db.Create(&models.AuthToken{
-        User: user,
-        Key: uuid.NewString(),
+    Db.Create(&models.Visit{
+        UserAgent: agent,
+        URI: vb.URL,
+        IP: ip,
     })
-}
-
-func validateRegisterInput(c *router.Context) error {
-    req := c.Request.Body
-
-    var b map[string]any
-    json.NewDecoder(req).Decode(&b)
-
-    if _, ok := b["name"]; ok == false {
-        c.WriteMap(map[string]any{
-            "error": "Please enter a name.",
-        }, 422)
-
-        return errors.New("Missing name.")
-    }
-    
-    if _, ok := b["email"]; ok == false {
-        c.WriteMap(map[string]any{
-            "error": "Please enter an email.",
-        }, 422)
-
-        return errors.New("Missing email.")
-    }
-    
-    if _, ok := b["password"]; ok == false {
-        c.WriteMap(map[string]any{
-            "error": "Please enter a password.",
-        }, 422)
-
-        return errors.New("Missing password.")
-    }
-    
-    if _, ok := b["name"].(string); ok == false {
-        c.WriteMap(map[string]any{
-            "error": "Please enter a name.",
-        }, 422)
-
-        return errors.New("Missing name.")
-    }
-    
-    if _, ok := b["email"].(string); ok == false {
-        c.WriteMap(map[string]any{
-            "error": "Please enter an email.",
-        }, 422)
-
-        return errors.New("Missing email.")
-    }
-    
-    if _, ok := b["password"].(string); ok == false {
-        c.WriteMap(map[string]any{
-            "error": "Please enter a password.",
-        }, 422)
-
-        return errors.New("Missing password.")
-    }
-
-    c.WithValue("name", b["name"].(string))
-    c.WithValue("email", b["email"].(string))
-    c.WithValue("password", []byte(b["password"].(string)))
-
-    return nil
-}
-
-func testCallback(c *router.Context) {
-	test := c.Value("test").(string)
-
-	c.WriteMap(map[string]any{
-		"status": test,
-	}, 200)
-}
-
-func testMiddleware(c *router.Context) error {
-	test := c.Context.Value("test").(string)
-
-	fmt.Println("Test middleware!", test)
-
-	return nil
 }

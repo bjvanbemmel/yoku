@@ -253,7 +253,7 @@ func findRouteByRequest(r *http.Request) (*Route, error) {
 			continue
 		}
 
-		if match, _ := regexp.MatchString(route.Regex, r.URL.String()); match == false {
+		if match, _ := regexp.MatchString(route.Regex, r.URL.Path); match == false {
 			continue
 		}
 
