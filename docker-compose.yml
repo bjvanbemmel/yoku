@@ -6,13 +6,28 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - ${DOCKER_HOST_PORT}:${APP_PORT}
+      - ${DOCKER_HOST_PORT:-81}:${APP_PORT:-80}
     volumes:
       - ./:/yoku/api
     env_file: 
       - ./.env
-    dns_search:
-      - yoku.api
+    depends_on:
+      - postgres
+    networks:
+      - yoku
+    restart: always
+
+  postgres:
+    image: postgres:15.1
+    ports:
+      - ${DOCKER_DB_PORT:-5433}:${POSTGRES_PORT:-5432}
+    env_file: 
+      - ./.env
+    volumes:
+      - /yoku/postgres:/var/lib/postgresql/data
+    networks:
+      - yoku
+    restart: always
 
 networks:
   yoku:
