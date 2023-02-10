@@ -5,5 +5,3 @@ WORKDIR /yoku/dashboard
 COPY ./web /yoku/dashboard
 
 CMD [ "npm", "install" ]
-
-ENTRYPOINT [ "/bin/sh", "-c" ]
