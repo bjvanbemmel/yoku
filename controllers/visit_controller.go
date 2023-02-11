@@ -22,7 +22,7 @@ type VisitBody struct {
 func (v VisitController) Index(c *router.Context) {
     var visits []models.Visit
 
-    Paginate(c.QueryInt("page"), 5).Find(&visits)
+    Paginate(c.QueryInt("page"), 5).Preload("VisitPath").Find(&visits)
 
     c.WriteMap(map[string]any {
         "data": visits,
