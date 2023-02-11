@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 	"net/http"
 
@@ -17,6 +18,16 @@ var Cache *cache.Cache = cache.New()
 
 type VisitBody struct {
 	URL string
+}
+
+func (v VisitController) Index(c *router.Context) {
+    var visits []models.Visit
+    Db.Find(&visits)
+
+    c.WriteMap(map[string]any {
+        "data": visits,
+    }, 200)
+    fmt.Println(visits)
 }
 
 func (v VisitController) Create(c *router.Context) {

@@ -17,6 +17,7 @@ func main() {
 	cacheController := controllers.CacheController{}
 
 	router.Post("/visit", visitController.Create)
+	router.Get("/visit", visitController.Index)
 	router.Get("/cache", cacheController.Index)
 	router.Delete("/cache/{cache}", cacheController.Delete)
 
