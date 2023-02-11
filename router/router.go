@@ -63,6 +63,19 @@ func (c *Context) WithValue(key any, value any) *Context {
 	return c
 }
 
+// Wrapper for the context.Request.URL.Query().Get() method.
+func (c *Context) Query(key string) (string) {
+    return c.Request.URL.Query().Get(key)
+}
+
+// Wrapper for the context.Request.URL.Query().Get() method with a dedicated return type.
+func (c *Context) QueryInt(key string) (int) {
+    query := c.Request.URL.Query().Get(key)
+    queryInt, _ := strconv.Atoi(query)
+
+    return queryInt
+}
+
 // Write a string to the ResponseWriter.
 func (c *Context) WriteString(content string, status int) {
 	c.ResponseWriter.WriteHeader(status)

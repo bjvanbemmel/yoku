@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net"
 	"net/http"
 
@@ -22,12 +21,12 @@ type VisitBody struct {
 
 func (v VisitController) Index(c *router.Context) {
     var visits []models.Visit
-    Db.Find(&visits)
+
+    Paginate(c.QueryInt("page"), 5).Find(&visits)
 
     c.WriteMap(map[string]any {
         "data": visits,
     }, 200)
-    fmt.Println(visits)
 }
 
 func (v VisitController) Create(c *router.Context) {

@@ -10,6 +10,11 @@ import (
 
 var Db *gorm.DB
 
+type Paginator struct {
+    CurrentPage int
+    PerPage int
+}
+
 func init() {
 	var dsn string = fmt.Sprintf("host=%v user=%v password=%v dbname=%v sslmode=disable TimeZone=Europe/London",
 		os.Getenv("POSTGRES_HOST"),
@@ -19,4 +24,12 @@ func init() {
 	)
 
 	Db, _ = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+}
+
+func Paginate(page, perPage int) *gorm.DB {
+    if page < 1 {
+        page = 1
+    }
+
+    return Db.Offset((page - 1) * perPage).Limit(perPage)
 }
