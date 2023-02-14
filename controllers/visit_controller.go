@@ -73,6 +73,8 @@ func (v VisitController) Create(c *router.Context) {
 			"error":   "cache_malfunction",
 			"message": "Something went wrong while retrieving from cache.",
 		}, 500)
+
+        return
 	}
 
 	Db.Create(&models.Visit{
@@ -91,9 +93,4 @@ func getIp(c *http.Request) (string, error) {
 	}
 
 	return ip, err
-}
-
-func addVisitPathToCache(vp models.VisitPath) (*models.VisitPath, error) {
-
-	return nil, nil
 }
