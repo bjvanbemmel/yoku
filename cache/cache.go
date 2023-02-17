@@ -3,6 +3,7 @@ package cache
 import (
 	"errors"
 	"strconv"
+	"sync"
 )
 
 type Cache struct {
@@ -11,6 +12,8 @@ type Cache struct {
 }
 
 var CacheList []*Cache
+
+var mutex sync.Mutex
 
 func New() *Cache {
 	cache := &Cache{
@@ -24,6 +27,9 @@ func New() *Cache {
 }
 
 func (c *Cache) Insert(key string, value any) (any, error) {
+	mutex.Lock()
+	defer mutex.Unlock()
+
 	c.Inventory[key] = value
 
 	return c.Inventory[key], nil

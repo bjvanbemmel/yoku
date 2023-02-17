@@ -20,13 +20,13 @@ type VisitBody struct {
 }
 
 func (v VisitController) Index(c *router.Context) {
-    var visits []models.Visit
+	var visits []models.Visit
 
-    Paginate(c.QueryInt("page"), 5000).Preload("VisitPath").Order("id DESC").Find(&visits)
+	Paginate(c.QueryInt("page"), 5000).Preload("VisitPath").Order("id DESC").Find(&visits)
 
-    c.WriteMap(map[string]any {
-        "data": visits,
-    }, 200)
+	c.WriteMap(map[string]any{
+		"data": visits,
+	}, 200)
 }
 
 func (v VisitController) Create(c *router.Context) {
@@ -74,7 +74,7 @@ func (v VisitController) Create(c *router.Context) {
 			"message": "Something went wrong while retrieving from cache.",
 		}, 500)
 
-        return
+		return
 	}
 
 	Db.Create(&models.Visit{

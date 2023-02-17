@@ -11,8 +11,8 @@ import (
 var Db *gorm.DB
 
 type Paginator struct {
-    CurrentPage int
-    PerPage int
+	CurrentPage int
+	PerPage     int
 }
 
 func init() {
@@ -27,9 +27,9 @@ func init() {
 }
 
 func Paginate(page, perPage int) *gorm.DB {
-    if page < 1 {
-        page = 1
-    }
+	if page < 1 {
+		page = 1
+	}
 
-    return Db.Offset((page - 1) * perPage).Limit(perPage)
+	return Db.Offset((page - 1) * perPage).Limit(perPage)
 }
