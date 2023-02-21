@@ -8,7 +8,7 @@ services:
     ports:
       - ${DOCKER_HOST_PORT:-81}:${APP_PORT:-80}
     volumes:
-      - ./:/yoku/api
+      - api:/yoku/api
     env_file: 
       - ./.env
     depends_on:
@@ -24,7 +24,7 @@ services:
     env_file: 
       - ./.env
     volumes:
-      - /yoku/postgres:/var/lib/postgresql/data
+      - postgres:/yoku/database
     networks:
       - yoku
     restart: always
@@ -43,5 +43,15 @@ services:
     networks:
       - yoku
     restart: always
+
 networks:
   yoku:
+
+volumes:
+  postgres:
+  api: 
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './'
