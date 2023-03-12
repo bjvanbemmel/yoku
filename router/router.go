@@ -82,7 +82,7 @@ func (c *Context) WriteString(content string, status int) {
 	c.ResponseWriter.Write([]byte(content))
 }
 
-// Write a string to the ResponseWriter.
+// Write a boolean to the ResponseWriter.
 func (c *Context) WriteBool(content bool, status int) {
 	c.ResponseWriter.WriteHeader(status)
 	c.ResponseWriter.Write([]byte(strconv.FormatBool(content)))
