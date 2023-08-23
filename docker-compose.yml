@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  yoku:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    networks:
+      - yoku
+    volumes:
+      - ./:/yoku
+
+networks:
+  yoku:
